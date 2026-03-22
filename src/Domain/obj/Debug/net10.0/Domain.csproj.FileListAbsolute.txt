@@ -1,0 +1,12 @@
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/bin/Debug/net10.0/Domain.deps.json
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/bin/Debug/net10.0/Domain.dll
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/bin/Debug/net10.0/Domain.pdb
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/Domain.AssemblyInfoInputs.cache
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/Domain.AssemblyInfo.cs
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/Domain.csproj.CoreCompileInputs.cache
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/Domain.sourcelink.json
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/Domain.dll
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/refint/Domain.dll
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/Domain.pdb
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Domain/obj/Debug/net10.0/ref/Domain.dll
