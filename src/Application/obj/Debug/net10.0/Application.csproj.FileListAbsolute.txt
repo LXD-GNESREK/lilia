@@ -1,0 +1,12 @@
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/bin/Debug/net10.0/Application.deps.json
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/bin/Debug/net10.0/Application.dll
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/bin/Debug/net10.0/Application.pdb
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/Application.AssemblyInfoInputs.cache
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/Application.AssemblyInfo.cs
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/Application.csproj.CoreCompileInputs.cache
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/Application.sourcelink.json
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/Application.dll
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/refint/Application.dll
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/Application.pdb
+/home/LXD-002-GNESREK/dev/Personal Projects/Lilia/src/Application/obj/Debug/net10.0/ref/Application.dll
