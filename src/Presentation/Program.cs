@@ -38,7 +38,7 @@ namespace Lilia
                                                                                     .Build();
             Black_Squadron.Add(TIE_LN);
             Black_Squadron.Add(TIE_SA);
-            Imperial_11th_Division.Display(0);
+            Imperial_11th_Division.DisplaySimple(0);
         }
     }
 }

@@ -6,5 +6,6 @@ namespace Lilia.Domain.Interfaces
     {
         int Total();
         void Display(int indentLevel);
+        void DisplaySimple(int indentLevel);
     }
 }

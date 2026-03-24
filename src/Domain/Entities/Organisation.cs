@@ -46,5 +46,16 @@ namespace Lilia.Domain.Entities
                 element.Display(indentLevel + 1);
             }
         }
+
+        public void DisplaySimple(int indentLevel)
+        {
+            string indent = new string(' ', indentLevel * 4);
+            Console.WriteLine($"{indent}[+] {Name} (Total: {Total()})");
+
+            foreach(var element in _elements)
+            {
+                element.DisplaySimple(indentLevel + 1);
+            }
+        }
     }
 }

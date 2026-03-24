@@ -32,5 +32,11 @@ namespace Lilia.Domain.Entities
         }
 
         public abstract void Display(int indentLevel);
+
+        public void DisplaySimple(int indentLevel)
+        {
+            string indent = new string(' ', indentLevel * 4);
+            Console.WriteLine($"{indent}- {DisplayTag}");
+        }
     }
 }
