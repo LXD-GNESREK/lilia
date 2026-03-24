@@ -38,7 +38,23 @@ namespace Lilia
                                                                                     .Build();
             Black_Squadron.Add(TIE_LN);
             Black_Squadron.Add(TIE_SA);
-            Imperial_11th_Division.Display(0);
+            for (int i = 0; i < 144; i++)
+            {
+                Starfighter tieFighter = new StarfighterBuilder("TIE/LN", 60000, 0, $"IMP-{i:D3}")
+                                                                                                .WithShields(RelativeRating.VeryWeak)
+                                                                                                .WithHull(RelativeRating.Weak)
+                                                                                                .WithManeuverability(RelativeRating.AboveAverage)
+                                                                                                .WithDimensions(6.4, 6.4, 7.5)
+                                                                                                .WithSpaceSpeed(1000)
+                                                                                                .WithAtmosphericSpeed(1200)
+                                                                                                .WithHyperdriveRating(0.0)
+                                                                                                .WithCargoCapacity(65)
+                                                                                                .WithConsumables("2 days")
+                                                                                                .Build();
+                                
+                Black_Squadron.Add(tieFighter);
+            }
+            Imperial_11th_Division.DisplaySimple(0);
         }
     }
 }
