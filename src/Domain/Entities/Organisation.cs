@@ -52,10 +52,28 @@ namespace Lilia.Domain.Entities
             string indent = new string(' ', indentLevel * 4);
             Console.WriteLine($"{indent}[+] {Name} (Total: {Total()})");
 
-            foreach(var element in _elements)
-            {
-                element.DisplaySimple(indentLevel + 1);
-            }
+            this.Elements.GroupBy(e => e.Name)
+                        .OrderBy(g => g.Key)
+                        .ToList()
+                        .ForEach(g =>
+                        {
+                            var element = g.First();
+                            if (g.Count() > 1)
+                            {
+                                if(element is BaseUnit unit)
+                                {
+                                    Console.WriteLine($"{indent}    - {g.Count()} {g.Key}");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{indent}    - {g.Count()} {g.Key} ({g.First().Total()})");
+                                }
+                            }
+                            else
+                            {
+                                element.DisplaySimple(indentLevel + 1);
+                            }
+                        });
         }
     }
 }
