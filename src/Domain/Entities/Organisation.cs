@@ -1,20 +1,29 @@
 // src/Domain/Entities/Organisation.cs
 
 using Lilia.Domain.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace Lilia.Domain.Entities
 {
-    public class Organisation : IForceElement
+    public partial class Organisation : IForceElement
     {
         public string Name { get; private set; }
+        public string ShortCode { get; private set; }
         public Guid InternalID { get; private set; } = Guid.NewGuid();
         private readonly List<IForceElement> _elements = new List<IForceElement>();
         public IReadOnlyList<IForceElement> Elements => _elements.AsReadOnly();
 
-        public Organisation(string name)
+        [GeneratedRegex("^[a-zA-Z0-9_-]+$")]
+        private static partial Regex AlphanumericRegex();
+
+        public Organisation(string name, string shortCode)
         {
-            if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Organisation name cannot be null or empty.", nameof(name));
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Organisation name cannot be null or empty.", nameof(name));
+            if (string.IsNullOrWhiteSpace(shortCode)) throw new ArgumentException("ShortCode cannot be null or empty.", nameof(shortCode));
+            if (!AlphanumericRegex().IsMatch(shortCode)) throw new ArgumentException("ShortCode must be alphanumeric and contain no spaces.", nameof(shortCode));
+
             Name = name;
+            ShortCode = shortCode.ToUpperInvariant();
         }
 
         public void Add(IForceElement element)
@@ -39,7 +48,7 @@ namespace Lilia.Domain.Entities
         public void Display(int indentLevel)
         {
             string indent = new string(' ', indentLevel * 4);
-            Console.WriteLine($"{indent}[+] {Name} (Total: {Total()})");
+            Console.WriteLine($"{indent}[+] {Name} [{ShortCode}] (Total: {Total()})");
 
             foreach(var element in _elements)
             {
@@ -50,7 +59,7 @@ namespace Lilia.Domain.Entities
         public void DisplaySimple(int indentLevel)
         {
             string indent = new string(' ', indentLevel * 4);
-            Console.WriteLine($"{indent}[+] {Name} (Total: {Total()})");
+            Console.WriteLine($"{indent}[+] {Name} [{ShortCode}] (Total: {Total()})");
 
             this.Elements.GroupBy(e => e.Name)
                         .OrderBy(g => g.Key)

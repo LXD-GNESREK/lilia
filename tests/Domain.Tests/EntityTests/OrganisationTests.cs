@@ -14,7 +14,7 @@ namespace Lilia.Domain.Tests.EntityTests
             string name = "Test Organisation";
 
             // Act
-            var organisation = new Organisation(name);
+            var organisation = new Organisation(name, "TEST");
 
             // Assert
             Assert.NotNull(organisation);
@@ -30,14 +30,14 @@ namespace Lilia.Domain.Tests.EntityTests
         public void Organisation_Creation_ShouldThrowException_WhenNameIsInvalid(string? invalidName)
         {
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Organisation(invalidName!));
+            Assert.Throws<ArgumentException>(() => new Organisation(invalidName!, "TEST"));
         }
 
         [Fact]
         public void Organisation_AddElement_Success()
         {
             // Arrange
-            var organisation = new Organisation("Test Organisation");
+            var organisation = new Organisation("Test Organisation", "TEST");
             var element = new TestUnit("Test Unit", 100, 2, "REG123");
 
             // Act
@@ -52,7 +52,7 @@ namespace Lilia.Domain.Tests.EntityTests
         public void Organisation_RemoveElement_Success()
         {
             // Arrange
-            var organisation = new Organisation("Test Organisation");
+            var organisation = new Organisation("Test Organisation", "TEST");
             var element = new TestUnit("Test Unit", 100, 2, "REG123");
             organisation.Add(element);
 
@@ -67,7 +67,7 @@ namespace Lilia.Domain.Tests.EntityTests
         public void Organisation_AddNull_ShouldThrowException()
         {
             // Arrange
-            var organisation = new Organisation("Test Organisation");
+            var organisation = new Organisation("Test Organisation", "TEST");
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() => organisation.Add(null!));
@@ -77,7 +77,7 @@ namespace Lilia.Domain.Tests.EntityTests
         public void Organisation_AddSelf_ShouldThrowException()
         {
             // Arrange
-            var organisation = new Organisation("Test Organisation");
+            var organisation = new Organisation("Test Organisation", "TEST");
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => organisation.Add(organisation));
@@ -87,7 +87,7 @@ namespace Lilia.Domain.Tests.EntityTests
         public void Organisation_Total_ShouldReturnZero_WhenNoElements()
         {
             // Arrange
-            var organisation = new Organisation("Test Organisation");
+            var organisation = new Organisation("Test Organisation", "TEST");
 
             // Act
             int total = organisation.Total();
@@ -100,7 +100,7 @@ namespace Lilia.Domain.Tests.EntityTests
         public void Organisation_Total_ShouldReturnSumOfElements()
         {
             // Arrange
-            var organisation = new Organisation("Test Organisation");
+            var organisation = new Organisation("Test Organisation", "TEST");
             var element1 = new TestUnit("Test Unit 1", 100, 2, "REG123");
             var element2 = new TestUnit("Test Unit 2", 200, 3, "REG456");
             organisation.Add(element1);
@@ -117,9 +117,9 @@ namespace Lilia.Domain.Tests.EntityTests
         public void Organisation_Total_ShouldIncludeNestedElements()
         {
             // Arrange
-            var organisation = new Organisation("Test Organisation");
+            var organisation = new Organisation("Test Organisation", "TEST");
             var element1 = new TestUnit("Test Unit 1", 100, 2, "REG123");
-            var subOrganisation = new Organisation("Sub Organisation");
+            var subOrganisation = new Organisation("Sub Organisation", "SUB");
             var element2 = new TestUnit("Test Unit 2", 200, 3, "REG456");
             subOrganisation.Add(element2);
             organisation.Add(element1);
@@ -130,6 +130,23 @@ namespace Lilia.Domain.Tests.EntityTests
 
             // Assert
             Assert.Equal(300, total);
+        }
+
+        [Fact]
+        public void Organisation_Creation_WithValidShortCode_Success()
+        {
+            var organisation = new Organisation("Test Org", "TEST_ORG-1");
+            Assert.Equal("TEST_ORG-1", organisation.ShortCode);
+        }
+
+        [Theory]
+        [InlineData("Has Spaces")]
+        [InlineData("Invalid@Char")]
+        [InlineData("")]
+        [InlineData(null)]
+        public void Organisation_Creation_ShouldThrowException_WhenShortCodeIsInvalid(string? invalidShortCode)
+        {
+            Assert.Throws<ArgumentException>(() => new Organisation("Name", invalidShortCode!));
         }
     }
 }

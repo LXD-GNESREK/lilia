@@ -22,7 +22,7 @@ namespace Lilia.Domain.Tests.EntityTests
         public void AddOrganisation_Success()
         {
             var player = new Player(123456789);
-            var org = new Organisation("Test Org");
+            var org = new Organisation("Test Org", "TEST");
 
             player.AddOrganisation(org);
 
@@ -42,7 +42,7 @@ namespace Lilia.Domain.Tests.EntityTests
         public void RemoveOrganisation_Success()
         {
             var player = new Player(123456789);
-            var org = new Organisation("Test Org");
+            var org = new Organisation("Test Org", "TEST");
             player.AddOrganisation(org);
 
             player.RemoveOrganisation(org);
