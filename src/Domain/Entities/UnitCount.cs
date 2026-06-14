@@ -2,21 +2,27 @@ namespace Lilia.Domain.Entities
 {
     public class UnitCount
     {
-        public Dictionary<BaseUnit, int> Units { get; private set; }
+        public Dictionary<string, int> Units { get; private set; }
         public UnitCount()
         {
-            Units = new Dictionary<BaseUnit, int>();
+            Units = new Dictionary<string, int>();
         }
 
-        public void AddUnit(BaseUnit unit, int count)
+        public void AddUnit(string unitName, int count)
         {
-            if (Units.ContainsKey(unit))
+            if(string.IsNullOrWhiteSpace(unitName)) throw new ArgumentException("Unit name cannot be null or empty.", nameof(unitName));
+            if(count < 0 && (!Units.ContainsKey(unitName) || Units[unitName] + count < 0))
             {
-                Units[unit] += count;
+                throw new InvalidOperationException("Cannot reduce unit count below zero.");
+            }
+
+            if (Units.ContainsKey(unitName))
+            {
+                Units[unitName] += count;
             }
             else
             {
-                Units[unit] = count;
+                Units[unitName] = count;
             }
         }
     }

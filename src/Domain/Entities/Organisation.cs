@@ -56,6 +56,23 @@ namespace Lilia.Domain.Entities
             }
         }
 
+        public int CountUnitsByName(string unitName)
+        {
+            int count = 0;
+            foreach (var element in _elements)
+            {
+                if(element is BaseUnit unit && unit.Name.Equals(unitName, StringComparison.OrdinalIgnoreCase))
+                {
+                    count++;
+                }
+                else if(element is Organisation subOrg)
+                {
+                    count += subOrg.CountUnitsByName(unitName);
+                }
+            }
+            return count;
+        }
+
         public void DisplaySimple(int indentLevel)
         {
             string indent = new string(' ', indentLevel * 4);

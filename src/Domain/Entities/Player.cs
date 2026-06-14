@@ -33,5 +33,17 @@ namespace Lilia.Domain.Entities
             }
             _organisations.Remove(organisation);
         }
+
+        public int GetUnassignedUnitCount(string unitName)
+        {
+            int totalOwned = 0;
+            if(UnitCount.Units.TryGetValue(unitName, out int count))
+            {
+                totalOwned = count;
+            }
+
+            int totalAssigned = _organisations.Sum(org => org.CountUnitsByName(unitName));
+            return totalOwned - totalAssigned;
+        }
     }
 }
