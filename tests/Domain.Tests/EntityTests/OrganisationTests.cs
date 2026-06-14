@@ -148,5 +148,32 @@ namespace Lilia.Domain.Tests.EntityTests
         {
             Assert.Throws<ArgumentException>(() => new Organisation("Name", invalidShortCode!));
         }
+
+        [Fact]
+        public void CountUnitsByName_ShouldReturnCorrectCount_IncludingNestedOrganisations()
+        {
+            var parentOrg = new Organisation("Parent", "PRNT");
+            var childOrg = new Organisation("Child", "CHLD");
+            
+            var unit1 = new TestUnit("TIE/LN", 100, 0, "001");
+            var unit2 = new TestUnit("TIE/LN", 100, 0, "002");
+            var unit3 = new TestUnit("TIE/IN", 150, 0, "003");
+            var unit4 = new TestUnit("TIE/LN", 100, 0, "004");
+
+            parentOrg.Add(unit1);
+            parentOrg.Add(unit2);
+            parentOrg.Add(unit3);
+            
+            childOrg.Add(unit4);
+            parentOrg.Add(childOrg);
+
+            int tieLnCount = parentOrg.CountUnitsByName("TIE/LN");
+            int tieInCount = parentOrg.CountUnitsByName("TIE/IN");
+            int unknownCount = parentOrg.CountUnitsByName("X-Wing");
+
+            Assert.Equal(3, tieLnCount);
+            Assert.Equal(1, tieInCount);
+            Assert.Equal(0, unknownCount);
+        }
     }
 }

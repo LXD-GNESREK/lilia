@@ -57,5 +57,26 @@ namespace Lilia.Domain.Tests.EntityTests
 
             Assert.Throws<ArgumentNullException>(() => player.RemoveOrganisation(null!));
         }
+
+        [Fact]
+        public void GetUnassignedUnitCount_ShouldReturnDifferenceBetweenTotalAndAssigned()
+        {
+            var player = new Player(12345);
+            player.UnitCount.AddUnit("TIE/LN", 24); // Player owns 24 total
+
+            var org = new Organisation("Squadron", "SQUAD");
+            
+            // Assign 4 to the organisation
+            org.Add(new Lilia.Domain.Tests.Mocks.TestUnit("TIE/LN", 100, 0, "001"));
+            org.Add(new Lilia.Domain.Tests.Mocks.TestUnit("TIE/LN", 100, 0, "002"));
+            org.Add(new Lilia.Domain.Tests.Mocks.TestUnit("TIE/LN", 100, 0, "003"));
+            org.Add(new Lilia.Domain.Tests.Mocks.TestUnit("TIE/LN", 100, 0, "004"));
+
+            player.AddOrganisation(org);
+
+            int unassigned = player.GetUnassignedUnitCount("TIE/LN");
+
+            Assert.Equal(20, unassigned);
+        }
     }
 }
