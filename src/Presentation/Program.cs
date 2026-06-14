@@ -11,8 +11,8 @@ namespace Lilia
     {
         public static void Main(string[] args)
         {
-            Organisation Imperial_11th_Division = new Organisation("Imperial 11th Division");
-            Organisation Black_Squadron = new Organisation("Black Squadron");
+            Organisation Imperial_11th_Division = new Organisation("Imperial 11th Division", "11DIV");
+            Organisation Black_Squadron = new Organisation("Black Squadron", "BLK");
             Imperial_11th_Division.Add(Black_Squadron);
             Starfighter TIE_LN = new StarfighterBuilder("TIE/LN", 60000, 0, "IMP001")
                                                                                     .WithShields(RelativeRating.VeryWeak)
