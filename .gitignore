@@ -31,3 +31,10 @@ bld/
 
 # User-specific files (Visual Studio)
 .vs/
+
+# SQLite Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
