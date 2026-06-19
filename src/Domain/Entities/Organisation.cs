@@ -10,8 +10,16 @@ namespace Lilia.Domain.Entities
         public string Name { get; private set; }
         public string ShortCode { get; private set; }
         public Guid InternalID { get; private set; } = Guid.NewGuid();
-        private readonly List<IForceElement> _elements = new List<IForceElement>();
-        public IReadOnlyList<IForceElement> Elements => _elements.AsReadOnly();
+        public ulong? PlayerDiscordID { get; private set; }
+        public Player? Player { get; private set; }
+        public Guid? ParentOrganisationID { get; private set; }
+        public Organisation? ParentOrganisation { get; private set; }
+        private readonly List<Organisation> _subOrganisations = new();
+        public IReadOnlyCollection<Organisation> SubOrganisations => _subOrganisations.AsReadOnly();
+        private readonly List<BaseUnit> _assignedUnits = new();
+        public IReadOnlyCollection<BaseUnit> AssignedUnits => _assignedUnits.AsReadOnly();
+        public IReadOnlyList<IForceElement> Elements => _subOrganisations.Cast<IForceElement>().Concat(_assignedUnits).ToList().AsReadOnly();
+
 
         [GeneratedRegex("^[a-zA-Z0-9_-]+$")]
         private static partial Regex AlphanumericRegex();
@@ -26,23 +34,54 @@ namespace Lilia.Domain.Entities
             ShortCode = shortCode.ToUpperInvariant();
         }
 
+        internal void SetPlayer(Player? player)
+        {
+            PlayerDiscordID = player?.DiscordID;
+            Player = player;
+        }
+
+        internal void SetParent(Organisation? parent)
+        {
+            ParentOrganisationID = parent?.InternalID;
+            ParentOrganisation = parent;
+        }
+
         public void Add(IForceElement element)
         {
-            if (element == null) throw new ArgumentNullException(nameof(element));
-            if (element == this) throw new InvalidOperationException("An organisation cannot contain itself.");
+            if(element == null) throw new ArgumentNullException(nameof(element));
+            if(element == this) throw new InvalidOperationException("An organisation cannot add itself as an element.");
 
-            _elements.Add(element);
+            if(element is Organisation org)
+            {
+                org.SetParent(this);
+                _subOrganisations.Add(org);
+            }
+            else if(element is BaseUnit unit)
+            {
+                unit.SetOrganisation(this);
+                _assignedUnits.Add(unit);
+            }
         }
 
         public void Remove(IForceElement element)
         {
-            if (element == null) throw new ArgumentNullException(nameof(element));
-            _elements.Remove(element);
+            if(element == null) throw new ArgumentNullException(nameof(element));
+
+            if(element is Organisation org)
+            {
+                org.SetParent(null);
+                _subOrganisations.Remove(org);
+            }
+            else if(element is BaseUnit unit)
+            {
+                unit.SetOrganisation(null!);
+                _assignedUnits.Remove(unit);
+            }
         }
 
         public int Total()
         {
-            return _elements.Sum(e => e.Total());
+            return Elements.Sum(e => e.Total());
         }
 
         public void Display(int indentLevel)
@@ -50,7 +89,7 @@ namespace Lilia.Domain.Entities
             string indent = new string(' ', indentLevel * 4);
             Console.WriteLine($"{indent}[+] {Name} [{ShortCode}] (Total: {Total()})");
 
-            foreach(var element in _elements)
+            foreach(var element in Elements)
             {
                 element.Display(indentLevel + 1);
             }
@@ -58,18 +97,8 @@ namespace Lilia.Domain.Entities
 
         public int CountUnitsByName(string unitName)
         {
-            int count = 0;
-            foreach (var element in _elements)
-            {
-                if(element is BaseUnit unit && unit.Name.Equals(unitName, StringComparison.OrdinalIgnoreCase))
-                {
-                    count++;
-                }
-                else if(element is Organisation subOrg)
-                {
-                    count += subOrg.CountUnitsByName(unitName);
-                }
-            }
+            int count = _assignedUnits.Count(u => u.Name.Equals(unitName, StringComparison.OrdinalIgnoreCase));
+            count += _subOrganisations.Sum(org => org.CountUnitsByName(unitName));
             return count;
         }
 

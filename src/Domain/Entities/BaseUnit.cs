@@ -8,6 +8,8 @@ namespace Lilia.Domain.Entities
     {
         public string Name { get; private set; }
         public Guid InternalID { get; private set; } = Guid.NewGuid();
+        public Guid? OrganisationID { get; private set; }
+        public Organisation? Organisation { get; private set; }
         public abstract string Prefix { get; }
         public int Price { get; private set; }
         public int Modslots { get; private set; }
@@ -37,6 +39,12 @@ namespace Lilia.Domain.Entities
         {
             string indent = new string(' ', indentLevel * 4);
             Console.WriteLine($"{indent}- {DisplayTag}");
+        }
+
+        internal void SetOrganisation(Organisation? organisation)
+        {
+            OrganisationID = organisation?.InternalID;
+            Organisation = organisation;
         }
     }
 }

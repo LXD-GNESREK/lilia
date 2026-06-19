@@ -18,19 +18,18 @@ namespace Lilia.Domain.Entities
 
         public void AddOrganisation(Organisation organisation)
         {
-            if(organisation == null)
-            {
-                throw new ArgumentNullException(nameof(organisation));
-            }
+            if(organisation == null) throw new ArgumentNullException(nameof(organisation));
+            if(_organisations.Any(o => o.ShortCode == organisation.ShortCode)) throw new InvalidOperationException($"An organisation with the short code '{organisation.ShortCode}' already exists for this player.");
+
+            organisation.SetPlayer(this);
             _organisations.Add(organisation);
         }
 
         public void RemoveOrganisation(Organisation organisation)
         {
-            if(organisation == null)
-            {
-                throw new ArgumentNullException(nameof(organisation));
-            }
+            if(organisation == null) throw new ArgumentNullException(nameof(organisation));
+
+            organisation.SetPlayer(null);
             _organisations.Remove(organisation);
         }
 
