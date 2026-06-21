@@ -1,60 +1,44 @@
-﻿// src/Presentation/Program.cs
+﻿using Discord;
+using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
-using Lilia.Domain.Entities;
-using Lilia.Domain.Entities.Units;
-using Lilia.Domain.Builders;
-using Lilia.Domain.Enums;
+using Lilia.Infrastructure.Data;
+using Lilia.Presentation.Services;
 
-namespace Lilia
+namespace Lilia.Presentation
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            Organisation Imperial_11th_Division = new Organisation("Imperial 11th Division", "11DIV");
-            Organisation Black_Squadron = new Organisation("Black Squadron", "BLK");
-            Imperial_11th_Division.Add(Black_Squadron);
-            Starfighter TIE_LN = new StarfighterBuilder("TIE/LN", 60000, 0, "IMP001")
-                                                                                    .WithShields(RelativeRating.VeryWeak)
-                                                                                    .WithHull(RelativeRating.Weak)
-                                                                                    .WithManeuverability(RelativeRating.AboveAverage)
-                                                                                    .WithDimensions(6.4, 6.4, 7.5)
-                                                                                    .WithSpaceSpeed(1000)
-                                                                                    .WithAtmosphericSpeed(1200)
-                                                                                    .WithHyperdriveRating(0.0)
-                                                                                    .WithCargoCapacity(65)
-                                                                                    .WithConsumables("2 days")
-                                                                                    .Build();
-            Starfighter TIE_SA = new StarfighterBuilder("TIE/SA", 80000, 1, "IMP002")
-                                                                                    .WithShields(RelativeRating.Weak)
-                                                                                    .WithHull(RelativeRating.BelowAverage)
-                                                                                    .WithManeuverability(RelativeRating.Strong)
-                                                                                    .WithDimensions(6.4, 6.4, 7.5)
-                                                                                    .WithSpaceSpeed(1100)
-                                                                                    .WithAtmosphericSpeed(1300)
-                                                                                    .WithHyperdriveRating(0.0)
-                                                                                    .WithCargoCapacity(65)
-                                                                                    .WithConsumables("2 days")
-                                                                                    .Build();
-            Black_Squadron.Add(TIE_LN);
-            Black_Squadron.Add(TIE_SA);
-            for (int i = 0; i < 144; i++)
-            {
-                Starfighter tieFighter = new StarfighterBuilder("TIE/LN", 60000, 0, $"IMP-{i:D3}")
-                                                                                                .WithShields(RelativeRating.VeryWeak)
-                                                                                                .WithHull(RelativeRating.Weak)
-                                                                                                .WithManeuverability(RelativeRating.AboveAverage)
-                                                                                                .WithDimensions(6.4, 6.4, 7.5)
-                                                                                                .WithSpaceSpeed(1000)
-                                                                                                .WithAtmosphericSpeed(1200)
-                                                                                                .WithHyperdriveRating(0.0)
-                                                                                                .WithCargoCapacity(65)
-                                                                                                .WithConsumables("2 days")
-                                                                                                .Build();
-                                
-                Black_Squadron.Add(tieFighter);
-            }
-            Imperial_11th_Division.DisplaySimple(0);
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(config =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                    config.AddEnvironmentVariables();
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    string connectionString = context.Configuration.GetConnectionString("DefaultConnection")
+                        ?? throw new InvalidOperationException("Database connection string not found.");
+                    services.AddDbContext<LiliaDBContext>(options => 
+                        options.UseSqlite(connectionString));
+                    
+                    var discordConfig = new DiscordSocketConfig
+                    {
+                        GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent,
+                        AlwaysDownloadUsers = true
+                    };
+
+                    services.AddSingleton(new DiscordSocketClient(discordConfig));
+                    services.AddHostedService<DiscordBotService>();
+                })
+                .Build();
+
+            await host.RunAsync();
         }
     }
 }
