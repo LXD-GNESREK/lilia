@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Discord.Interactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,8 +33,9 @@ namespace Lilia.Presentation
                         GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent,
                         AlwaysDownloadUsers = true
                     };
-
                     services.AddSingleton(new DiscordSocketClient(discordConfig));
+                    services.AddSingleton(x  => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
+                    services.AddHostedService<InteractionHandler>();
                     services.AddHostedService<DiscordBotService>();
                 })
                 .Build();
