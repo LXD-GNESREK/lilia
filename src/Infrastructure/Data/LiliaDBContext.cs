@@ -3,6 +3,8 @@
 using Microsoft.EntityFrameworkCore;
 using Lilia.Domain.Entities;
 using Lilia.Domain.Entities.Units;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Lilia.Infrastructure.Data
 {
@@ -18,6 +20,13 @@ namespace Lilia.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            var dictionaryComparer = new ValueComparer<Dictionary<string, int>>
+            (
+                (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+            );
+
             modelBuilder.Entity<Player>(entity =>
             {
                 entity.HasKey(p => p.DiscordID);
@@ -25,7 +34,13 @@ namespace Lilia.Infrastructure.Data
 
                 entity.OwnsOne(p => p.UnitCount, uc =>
                 {
-                    uc.ToJson();
+                    uc.Property(u => u.Units)
+                      .HasConversion
+                      (
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => JsonSerializer.Deserialize<Dictionary<string, int>>(v, (JsonSerializerOptions?)null) ?? new Dictionary<string, int>()
+                      )
+                      .Metadata.SetValueComparer(dictionaryComparer);
                 });
 
                 entity.HasMany(p => p.Organisations)
