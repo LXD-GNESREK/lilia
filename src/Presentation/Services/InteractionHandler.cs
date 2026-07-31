@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -13,13 +14,15 @@ namespace Lilia.Presentation.Services
         private readonly InteractionService _handler;
         private readonly IServiceProvider _services;
         private readonly ILogger<InteractionHandler> _logger;
+        private readonly IConfiguration _configuration;
 
-        public InteractionHandler(DiscordSocketClient client, InteractionService handler, IServiceProvider services, ILogger<InteractionHandler> logger)
+        public InteractionHandler(DiscordSocketClient client, InteractionService handler, IServiceProvider services, ILogger<InteractionHandler> logger, IConfiguration configuration)
         {
             _client = client;
             _handler = handler;
             _services = services;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -62,8 +65,18 @@ namespace Lilia.Presentation.Services
 
         private async Task ReadyAsync()
         {
-            await _handler.RegisterCommandsGloballyAsync();
-            _logger.LogInformation("Commands registered globally.");
+            ulong? devGuildID = _configuration.GetValue<ulong?>("Discord:DevGuildId");
+
+            if(devGuildID.HasValue && devGuildID.Value != 0)
+            {
+                await _handler.RegisterCommandsToGuildAsync(devGuildID.Value);
+                _logger.LogInformation("Commands registered to Server: {GuildId}", devGuildID.Value);
+            }
+            else
+            {
+                await _handler.RegisterCommandsGloballyAsync();
+                _logger.LogInformation("Commands registered globally.");
+            }
         }
 
         private Task LogAsync(LogMessage message)
