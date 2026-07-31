@@ -34,6 +34,23 @@ namespace Lilia.Domain.Entities
             ShortCode = shortCode.ToUpperInvariant();
         }
 
+        public Organisation(string name, string shortCode, ulong playerDiscordID)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Organisation name cannot be null or empty.", nameof(name));
+            if (string.IsNullOrWhiteSpace(shortCode)) throw new ArgumentException("ShortCode cannot be null or empty.", nameof(shortCode));
+            if (!AlphanumericRegex().IsMatch(shortCode)) throw new ArgumentException("ShortCode must be alphanumeric and contain no spaces.", nameof(shortCode));
+
+            Name = name;
+            ShortCode = shortCode;
+            PlayerDiscordID = playerDiscordID;
+        }
+
+        protected Organisation()
+        {
+            Name = null!;
+            ShortCode = null!;
+        }
+
         internal void SetPlayer(Player? player)
         {
             PlayerDiscordID = player?.DiscordID;
