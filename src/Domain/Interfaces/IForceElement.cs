@@ -5,7 +5,7 @@ namespace Lilia.Domain.Interfaces
     public interface IForceElement
     {
         string Name { get; }
-        int Total();
+        long Total();
         void Display(int indentLevel);
         void DisplaySimple(int indentLevel);
     }

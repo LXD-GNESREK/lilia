@@ -6,7 +6,5 @@
     <Project Path="src/Presentation/Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/" />
-  <Folder Name="/tests/Domain.Tests/">
-    <Project Path="tests/Domain.Tests/Lilia.Domain.Tests.csproj" />
-  </Folder>
+  <Folder Name="/tests/Domain.Tests/" />
 </Solution>

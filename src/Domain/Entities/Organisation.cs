@@ -96,7 +96,7 @@ namespace Lilia.Domain.Entities
             }
         }
 
-        public int Total()
+        public long Total()
         {
             return Elements.Sum(e => e.Total());
         }
@@ -114,7 +114,7 @@ namespace Lilia.Domain.Entities
 
         public int CountUnitsByName(string unitName)
         {
-            int count = _assignedUnits.Count(u => u.Name.Equals(unitName, StringComparison.OrdinalIgnoreCase));
+            int count = _assignedUnits.Count(u => u.Blueprint.Name.Equals(unitName, StringComparison.OrdinalIgnoreCase));
             count += _subOrganisations.Sum(org => org.CountUnitsByName(unitName));
             return count;
         }
