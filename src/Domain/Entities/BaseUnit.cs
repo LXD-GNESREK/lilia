@@ -6,31 +6,29 @@ namespace Lilia.Domain.Entities
 {
     public abstract class BaseUnit : IForceElement
     {
-        public string Name { get; private set; }
+        public string Name => Blueprint != null ? Blueprint.Name : "Unknown Unit";
         public Guid InternalID { get; private set; } = Guid.NewGuid();
+        public Guid RegistryUnitID { get; private set; }
+        public RegistryUnit Blueprint { get; private set; } = null!;
         public Guid? OrganisationID { get; private set; }
         public Organisation? Organisation { get; private set; }
         public abstract string Prefix { get; }
-        public int Price { get; private set; }
-        public int Modslots { get; private set; }
         public string RegistryNumber { get; private set;}
         public string DisplayTag => $"{Name} ({Prefix}-{RegistryNumber})";
 
-        public BaseUnit(string name, int price, int modslots, string registryNumber)
+        protected BaseUnit() {}
+
+        public BaseUnit(Guid registryUnitID, string registryNumber)
         {
-            if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name cannot be null or empty.", nameof(name));
-            if(price < 0) throw new ArgumentOutOfRangeException(nameof(price), "Price cannot be negative.");
-            if(modslots < 0) throw new ArgumentOutOfRangeException(nameof(modslots), "Modslots cannot be negative.");
             if(string.IsNullOrWhiteSpace(registryNumber)) throw new ArgumentException("Registry number cannot be null or empty.", nameof(registryNumber));
-            Name = name;
-            Price = price;
-            Modslots = modslots;
+
+            RegistryUnitID = registryUnitID;
             RegistryNumber = registryNumber;
         }
 
-        public int Total()
+        public long Total()
         {
-            return Price;
+            return Blueprint != null ? Blueprint.Cost : 0;
         }
 
         public abstract void Display(int indentLevel);
@@ -45,6 +43,11 @@ namespace Lilia.Domain.Entities
         {
             OrganisationID = organisation?.InternalID;
             Organisation = organisation;
+        }
+
+        protected void SetBlueprint(RegistryUnit blueprint)
+        {
+            Blueprint = blueprint;
         }
     }
 }

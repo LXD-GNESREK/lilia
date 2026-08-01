@@ -13,6 +13,9 @@ namespace Lilia.Infrastructure.Data
         public DbSet<Player> Players { get; set; }
         public DbSet<Organisation> Organisations { get; set; }
         public DbSet<BaseUnit> Units { get; set; }
+        public DbSet<RegistryUnit> RegistryUnits { get; set; }
+        public DbSet<Shop> Shops { get; set; }
+        public DbSet<ShopRegistryUnit> ShopRegistryUnits { get; set; }
 
         public LiliaDBContext(DbContextOptions<LiliaDBContext> options) : base(options) {}
 
@@ -72,6 +75,21 @@ namespace Lilia.Infrastructure.Data
                 entity.HasDiscriminator<string>("UnitType")
                       .HasValue<Starfighter>("Starfighter");
             });
+
+            modelBuilder.Entity<ShopRegistryUnit>().HasKey(sru => new { sru.ShopID, sru.RegistryUnitID });
+
+            modelBuilder.Entity<ShopRegistryUnit>().HasOne(sru => sru.Shop)
+                                                   .WithMany(s => s.AvailableUnits)
+                                                   .HasForeignKey(sru => sru.ShopID);
+            
+            modelBuilder.Entity<ShopRegistryUnit>().HasOne(sru => sru.RegistryUnit)
+                                                   .WithMany()
+                                                   .HasForeignKey(sru => sru.RegistryUnitID);
+            
+            modelBuilder.Entity<BaseUnit>().HasOne(u => u.Blueprint)
+                                           .WithMany()
+                                           .HasForeignKey(u => u.RegistryUnitID)
+                                           .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
