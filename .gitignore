@@ -40,3 +40,6 @@ bld/
 *.sqlite3
 
 *appsettings.json
+
+## Publish Output
+lilia-production/
