@@ -27,9 +27,12 @@ namespace Lilia.Presentation.Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            await _handler.AddModulesAsync(typeof(Modules.UnitModule).Assembly, _services);
+
             _client.Ready += ReadyAsync;
             _handler.Log += LogAsync;
             _client.InteractionCreated += HandleInteraction;
+            _handler.InteractionExecuted += HandleInteractionExecuted;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -37,6 +40,7 @@ namespace Lilia.Presentation.Services
             _client.Ready -= ReadyAsync;
             _handler.Log -= LogAsync;
             _client.InteractionCreated -= HandleInteraction;
+            _handler.InteractionExecuted -= HandleInteractionExecuted;
             return Task.CompletedTask;
         }
 
@@ -50,6 +54,15 @@ namespace Lilia.Presentation.Services
                 if(!result.IsSuccess)
                 {
                     _logger.LogError("Error handling interactions: {ErrorReason}", result.ErrorReason);
+
+                    if(interaction.HasResponded)
+                    {
+                        await interaction.FollowupAsync($"**Error:** {result.ErrorReason}", ephemeral: true);
+                    }
+                    else
+                    {
+                        await interaction.RespondAsync($"**Error:** {result.ErrorReason}", ephemeral: true);
+                    }
                 }
             }
             catch(Exception ex)
@@ -69,6 +82,7 @@ namespace Lilia.Presentation.Services
 
             if(devGuildID.HasValue && devGuildID.Value != 0)
             {
+                Console.WriteLine($"[DEBUG] Discovered {_handler.Modules.Count} modules and {_handler.SlashCommands.Count} slash commands.");
                 await _handler.RegisterCommandsToGuildAsync(devGuildID.Value);
                 _logger.LogInformation("Commands registered to Server: {GuildId}", devGuildID.Value);
             }
@@ -94,6 +108,25 @@ namespace Lilia.Presentation.Services
 
             _logger.Log(severity, message.Exception, "{Message}", message.Message ?? message.Exception?.Message);
             return Task.CompletedTask;
+        }
+
+        private async Task HandleInteractionExecuted(ICommandInfo command, IInteractionContext context, IResult result)
+        {
+            if(!result.IsSuccess)
+            {
+                _logger.LogError("Command {CommandName} failed: {ErrorReason}", command?.Name, result.ErrorReason);
+
+                if (result.Error == InteractionCommandError.UnknownCommand) return;
+
+                if (context.Interaction.HasResponded)
+                {
+                    await context.Interaction.FollowupAsync($"**Error:** {result.ErrorReason}", ephemeral: true);
+                }
+                else
+                {
+                    await context.Interaction.RespondAsync($"**Error:** {result.ErrorReason}", ephemeral: true);
+                }
+            }
         }
     }
 }
