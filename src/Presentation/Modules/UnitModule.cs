@@ -2,6 +2,7 @@ using System.Text;
 using Discord.Interactions;
 using Lilia.Domain.Entities;
 using Lilia.Infrastructure.Data;
+using Lilia.Presentation.Preconditions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lilia.Presentation.Modules

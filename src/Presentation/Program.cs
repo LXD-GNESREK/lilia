@@ -30,7 +30,7 @@ namespace Lilia.Presentation
                     
                     var discordConfig = new DiscordSocketConfig
                     {
-                        GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent,
+                        GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers,
                         AlwaysDownloadUsers = true
                     };
                     services.AddSingleton(new DiscordSocketClient(discordConfig));
