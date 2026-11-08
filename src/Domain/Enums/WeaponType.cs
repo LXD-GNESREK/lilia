@@ -1,0 +1,48 @@
+// src/Domain/Enums/WeaponType.cs
+
+namespace Lilia.Domain.Enums
+{
+    public enum WeaponType
+    {
+        LightLaserCannon,
+        LaserCannon, 
+        HeavyLaserCannon,
+        IonPDCannon,
+        PDLaserCannon,
+        LightTurbolaserCannon,
+        TurbolaserCannon,
+        HeavyTurbolaserCannon,
+        MainBatteryTurbolaser,
+        LightIonCannon,
+        IonCannon,
+        HeavyIonCannon,
+        BattleshipIonCannon,
+        StarfighterProtonTorpedoLauncher,
+        StarfighterHeavyProtonTorpedoLauncher,
+        MagpulseLauncher,
+        CapitalProtonTorpedoLauncher,
+        CapitalHeavyProtonTorpedoLauncher,
+        AssaultProtonTorpedoLauncher,
+        ProtonRocketLauncher,
+        ProtonBombLauncher,
+        StarfighterConcussionMissileLauncher,
+        StarfighterHeavyConcussionMissileLauncher,
+        CapitalConcussionMissileLauncher,
+        CapitalHeavyConcussionMissileLauncher,
+        AssaultConcussionMissileLauncher,
+        IonBombLauncher,
+        PlasmaTorpedoLauncher,
+        ProtonBeamLauncher,
+        HeavyProtonBeamLauncher,
+        MassDriverLauncher,
+        HeavyMassDriverLauncher,
+        TripleMassDriverLauncher,
+        ThermalDetonatorLauncher,
+        AggressorPlasmaCannon,
+        MassDriverMissileLauncher,
+        HeavyMassDriverMissileLauncher,
+        ShieldLeech,
+        OrbitalAutoCannon,
+        LongRangeTurbolaserCluster,
+    }
+}
