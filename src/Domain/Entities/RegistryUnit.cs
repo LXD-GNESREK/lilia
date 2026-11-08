@@ -12,7 +12,11 @@ namespace Lilia.Domain.Entities
         public bool HasStats { get; private set; }
         public string StatDataJson { get; private set; }
 
-        private RegistryUnit() {}
+        private RegistryUnit()
+        {
+            Name = null!;
+            StatDataJson = null!;
+        }
 
         public RegistryUnit(string name, long cost, int modslots, UnitCategory category, bool hasStats, string statDataJson =  "{}")
         {
@@ -32,6 +36,26 @@ namespace Lilia.Domain.Entities
         {
             StatDataJson = statDataJson;
             HasStats = true;
+        }
+
+        public void UpdateBaseProperties(string? newName, long? newCost, int? newModslots)
+        {
+            if (!string.IsNullOrWhiteSpace(newName))
+            {
+                Name = newName;
+            }
+
+            if (newCost.HasValue)
+            {
+                if (newCost.Value < 0) throw new ArgumentOutOfRangeException(nameof(newCost), "Cost cannot be negative.");
+                Cost = newCost.Value;
+            }
+
+            if (newModslots.HasValue)
+            {
+                if (newModslots.Value < 0) throw new ArgumentOutOfRangeException(nameof(newModslots), "Modslots cannot be negative.");
+                Modslots = newModslots.Value;
+            }
         }
     }
 }

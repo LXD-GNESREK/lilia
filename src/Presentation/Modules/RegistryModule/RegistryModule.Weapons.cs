@@ -57,6 +57,80 @@ namespace Lilia.Presentation.Modules
             }
         }
 
+        [SlashCommand("remove-weapon", "Remove all weapon mounts of a specific type from a unit.")]
+        public async Task RemoveWeaponAsync(
+            [Summary("unit", "The unit to modify")] [Autocomplete(typeof(RegistryUnitAutocompleteHandler))] string unitIdString,
+            [Summary("weapon", "The type of weapon to remove")] [Autocomplete(typeof(WeaponTypeAutocompleteHandler))] string weaponTypeString)
+        {
+            await DeferAsync();
+
+            if (!Guid.TryParse(unitIdString, out Guid unitId))
+            {
+                await FollowupAsync("Invalid unit selection.");
+                return;
+            }
+
+            if (!Enum.TryParse<WeaponType>(weaponTypeString, out var weaponType))
+            {
+                await FollowupAsync("Invalid weapon selection. Please use the autocomplete menu.");
+                return;
+            }
+
+            var unit = await _dbContext.RegistryUnits.FirstOrDefaultAsync(u => u.ID == unitId);
+            if (unit == null)
+            {
+                await FollowupAsync("Unit not found in the registry.");
+                return;
+            }
+
+            switch (unit.Category)
+            {
+                case UnitCategory.Starfighter:
+                    await ProcessStarfighterWeaponRemovalAsync(unit, weaponType);
+                    break;
+                default:
+                    await FollowupAsync($"Weapon mounts are not currently supported for category: {unit.Category}");
+                    break;
+            }
+        }
+
+        private async Task ProcessStarfighterWeaponRemovalAsync(Domain.Entities.RegistryUnit unit, WeaponType weaponType)
+        {
+            if (!unit.HasStats || string.IsNullOrWhiteSpace(unit.StatDataJson))
+            {
+                await FollowupAsync($"**{unit.Name}** has no stats or weapons configured yet.");
+                return;
+            }
+
+            StarfighterStats stats;
+            try
+            {
+                stats = JsonSerializer.Deserialize<StarfighterStats>(unit.StatDataJson) ?? new StarfighterStats();
+            }
+            catch (JsonException)
+            {
+                await FollowupAsync("Failed to parse the unit's stats.");
+                return;
+            }
+
+            int removedMounts = stats.Armament.RemoveAll(m => m.WeaponType == weaponType);
+
+            string prettyWeaponName = System.Text.RegularExpressions.Regex.Replace(weaponType.ToString(), "(?<=[a-z])([A-Z])|(?<=[A-Z])([A-Z][a-z])", " $1$2").Trim();
+
+            if (removedMounts == 0)
+            {
+                await FollowupAsync($"**{unit.Name}** does not currently have any **{prettyWeaponName}** mounts equipped.");
+                return;
+            }
+
+            string updatedJson = JsonSerializer.Serialize(stats);
+            unit.UpdateStats(updatedJson);
+
+            await _dbContext.SaveChangesAsync();
+
+            await FollowupAsync($"Successfully removed {removedMounts} **{prettyWeaponName}** mount(s) from **{unit.Name}**.");
+        }
+
         private async Task ProcessStarfighterWeaponAsync(Domain.Entities.RegistryUnit unit, WeaponType weaponType, int quantity, string? config)
         {
             StarfighterStats stats;

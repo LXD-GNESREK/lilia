@@ -15,9 +15,9 @@ namespace Lilia.Presentation.Modules
         public async Task UpdateStarfighterStatsAsync(
             [Summary("unit", "The unit to update")] [Autocomplete(typeof(RegistryUnitAutocompleteHandler))] string unitIdString,
             [Summary("shield_rating", "Base shield rating")] RelativeRating? shieldRating = null,
-            [Summary("shield_override", "Override the scale category for shields")] UnitCategory? shieldOverride = null,
+            [Summary("shield_override", "Override the scale category for shields")] RatingScale? shieldOverride = null,
             [Summary("hull_rating", "Base hull rating")] RelativeRating? hullRating = null,
-            [Summary("hull_override", "Override the scale category for hull")] UnitCategory? hullOverride = null,
+            [Summary("hull_override", "Override the scale category for hull")] RatingScale? hullOverride = null,
             [Summary("length", "Length in meters")] double? length = null,
             [Summary("width", "Width in meters")] double? width = null,
             [Summary("height", "Height in meters")] double? height = null,

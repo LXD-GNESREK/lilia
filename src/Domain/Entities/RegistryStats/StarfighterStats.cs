@@ -6,9 +6,9 @@ namespace Lilia.Domain.Entities.RegistryStats
     public class StarfighterStats : IRegistryStats
     {
         public RelativeRating ShieldRating { get; set; }
-        public UnitCategory?  ShieldRatingOverride { get; set; }
+        public RatingScale?  ShieldRatingOverride { get; set; }
         public RelativeRating HullRating { get; set; }
-        public UnitCategory? HullRatingOverride { get; set; }
+        public RatingScale? HullRatingOverride { get; set; }
         public double Length { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }

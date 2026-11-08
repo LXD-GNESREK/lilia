@@ -58,7 +58,50 @@ namespace Lilia.Presentation.Modules
             await FollowupAsync($"Are you sure you want to permanently delete **{unit.Name}**?", components: components);
         }
 
-        // Logic for handling submissions of Slash Commands
+        [SlashCommand("edit-base", "Edit the base properties (Name, Cost, Modslots) of an existing unit.")]
+        public async Task EditBaseUnitAsync(
+        [Summary("unit", "The unit to edit")] [Autocomplete(typeof(RegistryUnitAutocompleteHandler))] string unitIdString,
+        [Summary("new_name", "The new name of the unit")] string? newName = null,
+        [Summary("new_cost", "The new cost of the unit")] long? newCost = null,
+        [Summary("new_modslots", "The new modslots amount")] int? newModslots = null)
+        {
+            await DeferAsync();
+
+            if (!Guid.TryParse(unitIdString, out Guid unitId))
+            {
+                await FollowupAsync("Invalid selection. Please use the autocomplete menu to select a unit.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(newName) && !newCost.HasValue && !newModslots.HasValue)
+            {
+                await FollowupAsync("You must provide at least one new value (Name, Cost, or Modslots) to update.");
+                return;
+            }
+
+            var unit = await _dbContext.RegistryUnits.FirstOrDefaultAsync(u => u.ID == unitId);
+            if (unit == null)
+            {
+                await FollowupAsync("That unit could not be found in the registry.");
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(newName) && !unit.Name.Equals(newName, StringComparison.OrdinalIgnoreCase))
+            {
+                bool nameExists = await _dbContext.RegistryUnits.AnyAsync(u => u.Name.ToLower() == newName.ToLower());
+                if (nameExists)
+                {
+                    await FollowupAsync($"A unit with the name **{newName}** already exists in the registry.");
+                    return;
+                }
+            }
+
+            unit.UpdateBaseProperties(newName, newCost, newModslots);
+            
+            await _dbContext.SaveChangesAsync();
+
+            await FollowupAsync($"Successfully updated the base properties for **{unit.Name}**.");
+        }
 
         [ModalInteraction("registry_create_modal")]
         public async Task OnRegistryCreateModalSubmit(RegistryCreateModal modal)

@@ -6,7 +6,10 @@ namespace Lilia.Domain.Entities
         public string Name { get; private set; }
         public ICollection<ShopRegistryUnit> AvailableUnits { get; private set; } = new List<ShopRegistryUnit>();
 
-        private Shop() {}
+        private Shop()
+        {
+            Name = null!;
+        }
 
         public Shop(string name)
         {

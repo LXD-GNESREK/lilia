@@ -16,7 +16,10 @@ namespace Lilia.Domain.Entities
         public string RegistryNumber { get; private set;}
         public string DisplayTag => $"{Name} ({Prefix}-{RegistryNumber})";
 
-        protected BaseUnit() {}
+        protected BaseUnit()
+        {
+            RegistryNumber = null!;
+        }
 
         public BaseUnit(Guid registryUnitID, string registryNumber)
         {
